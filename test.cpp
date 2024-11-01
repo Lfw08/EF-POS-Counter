@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <cstring>
-
+using namespace std;
 int main() {
     // 打开串口:ttyS0
     int serialPort = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);
@@ -28,14 +28,20 @@ int main() {
 
     // 读取数据
     char buffer[128];
-    int bytesRead = read(serialPort, buffer, sizeof(buffer));
-    if (bytesRead > 0) {
-        std::cout << "Data read from serial port: " << std::string(buffer, bytesRead) << std::endl;
-    } else {
-        std::cerr << "Error reading from serial port" << std::endl;
+    while(1){
+        memset(buffer,0,sizeof(buffer));
+        int bytesRead = read(serialPort, buffer, sizeof(buffer));
+        if (bytesRead > 0) {
+            cout << "Data read from serial port: " << string(buffer, bytesRead) << "\n";
+        } else {
+            cerr << "Error reading from serial port\n";
+            system("pause");
+        }
     }
+
 
     // 关闭串口
     close(serialPort);
+    //test Qiancy1427
     return 0;
 }
