@@ -42,6 +42,6 @@ int main() {
 
     // 关闭串口
     close(serialPort);
-    //test Qiancy1427
+    //test redirect
     return 0;
 }
