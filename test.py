@@ -3,12 +3,15 @@ import time
 
 def main():
     # 打开串口
+
+    
+
     ser = serial.Serial(
         port='COM1',       # 替换为你的串口名称，例如 'COM1' 或 '/dev/ttyS0'
         baudrate=9600,     # 波特率
         bytesize=serial.EIGHTBITS, # 数据位
         parity=serial.PARITY_NONE, # 校验位
-        stopbits=serial.STOPBITS_ONE, # 停止位
+        stopbits=float(serial.STOPBITS_ONE), # 停止位
         timeout=1          # 读超时时间（秒）
     )
 
