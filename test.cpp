@@ -29,16 +29,15 @@ int main() {
 
     // 读取数据
     char buffer[128];
-    while(1){
-        memset(buffer,0,sizeof(buffer));
-        int bytesRead = read(serialPort, buffer, sizeof(buffer));
-        if (bytesRead > 0) {
-            cout << "Data read from serial port: " << string(buffer, bytesRead) << "\n";
-        } else {
-            cerr << "Error reading from serial port\n";
-            system("pause");
-        }
+    memset(buffer,0,sizeof(buffer));
+    int bytesRead = read(serialPort, buffer, sizeof(buffer));
+    if (bytesRead > 0) {
+        cout << "Data read from serial port: " << string(buffer, bytesRead) << "\n";
+    } else {
+        cerr << "Error reading from serial port\n";
+        system("pause");
     }
+    int bytesWrite = write(serialPort, buffer, sizeof(buffer));
 
 
     // 关闭串口
