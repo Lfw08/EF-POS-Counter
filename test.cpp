@@ -7,7 +7,7 @@ using namespace std;
 int OpenSerial(const char *tty){
     int serialport = open(tty, O_RDWR | O_NOCTTY | O_NDELAY);
     if (serialport == -1) {
-        std::cerr << "Error opening serial port" << std::endl;
+        cerr << "Error opening serial port" << endl;
     }
     return serialport;
 }
