@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstring>
 using namespace std;
-int OpenSerial(string tty){
+int OpenSerial(const char *tty){
     int serialport = open(tty, O_RDWR | O_NOCTTY | O_NDELAY);
     if (serialport == -1) {
         std::cerr << "Error opening serial port" << std::endl;
@@ -26,8 +26,8 @@ void SetSerial(int serialport){
     tcsetattr(serialport, TCSANOW, &options);
 }
 int main() {
-    int Input_serialPort = OpenSerial("/dev/ttyS0");
-    int Output_serialPort = OpenSerial("/dev/ttyS1")
+    int Input_serialPort = OpenSerial((const char *)"/dev/ttyS0");
+    int Output_serialPort = OpenSerial((const char *)"/dev/ttyS1");
     SetSerial(Input_serialPort);
     SetSerial(Output_serialPort);
 
