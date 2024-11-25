@@ -35,6 +35,7 @@ int main() {
         char buffer[128];
         memset(buffer,0x7f,sizeof(buffer));
         buffer[0] ={'1'}; 
+        char out_buffer[]={'2','B'};
         /*int bytesRead = read(Input_serialPort, buffer, sizeof(buffer));
         if (bytesRead > 0) {
             cout << "Data read from serial port: " << string(buffer, bytesRead) << "\n";
@@ -42,7 +43,7 @@ int main() {
             cerr << "Error reading from serial port\n";
             system("pause");
         }*/
-        int bytesWrite = write(Output_serialPort, buffer, 1);
+        int bytesWrite = write(Output_serialPort, out_buffer, 1);
 
     // 关闭串口
     //close(Input_serialPort);

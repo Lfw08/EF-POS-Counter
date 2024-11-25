@@ -26,27 +26,11 @@ void SetSerial(int serialport){
     tcsetattr(serialport, TCSANOW, &options);
 }
 int main() {
-    //int Input_serialPort = OpenSerial((const char *)"/dev/ttyS0");
-    int Output_serialPort = OpenSerial((const char *)"/dev/ttyAMA2");
-    //SetSerial(Input_serialPort);
-    SetSerial(Output_serialPort);
-
-    // 读取数据
-        char buffer[128];
-        memset(buffer,0x7f,sizeof(buffer));
-        buffer[0] ={'1'}; 
-        /*int bytesRead = read(Input_serialPort, buffer, sizeof(buffer));
-        if (bytesRead > 0) {
-            cout << "Data read from serial port: " << string(buffer, bytesRead) << "\n";
-        } else {
-            cerr << "Error reading from serial port\n";
-            system("pause");
-        }*/
-        int bytesWrite = write(Output_serialPort, buffer, 1);
-
-    // 关闭串口
-    //close(Input_serialPort);
-    close(Output_serialPort);
-    //test redirect
+    int Input_serialPort = OpenSerial((const char *)"/dev/ttyAMA0");
+    SetSerial(Input_serialPort);
+    char buffer[5];
+    int bytesRead = read(Input_serialPort, buffer, sizeof(buffer));
+    cout<<buffer[0]<<" "<<buffer[1]<<" Done\n";
+    close(Input_serialPort);
     return 0;
 }
