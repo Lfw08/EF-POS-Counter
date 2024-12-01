@@ -9,6 +9,9 @@ int OpenSerial(const char *tty){
     if (serialport == -1) {
         cerr << "Error opening serial port" << endl;
     }
+    else{
+        fcntl(serialport, F_SETFL, 0);
+    }
     return serialport;
 }
 void SetSerial(int serialport){
