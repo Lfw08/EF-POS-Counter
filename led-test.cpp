@@ -1,86 +1,54 @@
-#include <wiringPi.h>
-#include <iostream>
-#include <vector>
-#include "ws2811.h"
+#include <stdio.h>
+#include <gpiod.h>
+#include <unistd.h>
 
-#define LED_COUNT 8  // LED灯珠数量
-#define GPIO_PIN 18  // 连接LED的数据引脚
+int main() {
+    struct gpiod_chip *chip;
+    struct gpiod_line *line_25, *line_16;
+    int offset_25 = 25; // GPIO pin number
+    int offset_16 = 16; // GPIO pin number
 
-ws2811_led_t led_color;
+    chip = gpiod_chip_open("/dev/gpiochip4"); // Replace 4 with the appropriate chip number
 
-struct ws2811_leds
-{
-    ws2811_led_t colors[LED_COUNT];
-};
-
-void setLEDColor(ws2811_led_t *leds, int index, uint8_t r, uint8_t g, uint8_t b)
-{
-    leds[index] = ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
-}
-
-int main()
-{
-    ws2811_t ledstring =
-            {
-                    .freq = WS2811_TARGET_FREQ,
-                    .dmanum = 10,
-                    .channel =
-                            {
-                                    [0] =
-                                            {
-                                                    .gpionum = GPIO_PIN,
-                                                    .count = LED_COUNT,
-                                                    .invert = 0,
-                                                    .brightness = 255,
-                                                    .strip_type = WS2811_STRIP_GRB
-                                            },
-                                    [1] =
-                                            {
-                                                    .gpionum = 0,
-                                                    .count = 0,
-                                                    .invert = 0,
-                                                    .brightness = 0
-                                            }
-                            }
-            };
-
-    ws2811_leds leds;
-
-    if (wiringPiSetup() == -1)
-    {
-        std::cerr << "wiringPi setup failed" << std::endl;
-        return -1;
+    if (!chip) {
+        perror("Open chip failed");
+        return 1;
     }
 
-    if (ws2811_init(&ledstring) != WS2811_SUCCESS)
-    {
-        std::cerr << "ws2811 init failed" << std::endl;
-        return -1;
+    line_25 = gpiod_chip_get_line(chip, offset_25);
+    line_16 = gpiod_chip_get_line(chip, offset_16);
+
+    if (!line_25 || !line_16) {
+        perror("Get line failed");
+        gpiod_chip_close(chip);
+        return 1;
     }
 
-    // 设置LED颜色
-    for (int i = 0; i < LED_COUNT; ++i)
-    {
-        setLEDColor(leds.colors, i, 255, 0, 0);  // 红色
+    // Request the lines for output
+    if (gpiod_line_request_output(line_25, "example", 0) < 0 ||
+        gpiod_line_request_output(line_16, "example", 0) < 0) {
+        perror("Request line as output failed");
+        gpiod_line_release(line_25);
+        gpiod_line_release(line_16);
+        gpiod_chip_close(chip);
+        return 1;
     }
 
-    // 更新LED状态
-    ledstring.channel[0].leds = leds.colors;
-    ws2811_render(&ledstring);
+    // Toggle the lines
+    // while (1) {
+        gpiod_line_set_value(line_25, 1);
+        gpiod_line_set_value(line_16, 1);
+        usleep(500000); // Delay
 
-    // 延时一段时间
-    delay(1000);
+        gpiod_line_set_value(line_25, 0);
+        gpiod_line_set_value(line_16, 0);
+        usleep(500000); // Delay
+    // }
 
-    // 关闭LED
-    for (int i = 0; i < LED_COUNT; ++i)
-    {
-        setLEDColor(leds.colors, i, 0, 0, 0);  // 关闭
-    }
-
-    ledstring.channel[0].leds = leds.colors;
-    ws2811_render(&ledstring);
-
-    ws2811_fini(&ledstring);
+    // Cleanup
+    gpiod_line_release(line_25);
+    gpiod_line_release(line_16);
+    gpiod_chip_close(chip);
 
     return 0;
 }
