@@ -4,6 +4,11 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
+#include <pthread.h>
+
+int cnt = -1, charnum;
+char newnum[5];
+pthread_t thread[5];
 
 int setupSerialPort(const char* serialPortPath) {
     // 打开串口
@@ -58,7 +63,7 @@ void writeSerialPort(int serial_port, const char* data) {
     }
 }
 
-void readSerialPort(int serial_port) {
+void *readSerialPort(void *serial_port) {
     char read_buf [256];
     ssize_t bytes_read = read(serial_port, &read_buf, sizeof(read_buf));
     if (bytes_read > 0) {
@@ -66,6 +71,12 @@ void readSerialPort(int serial_port) {
     } else if (bytes_read < 0) {
         std::cerr << "Error reading from serial port: " << strerror(errno) << std::endl;
     }
+    pthread_exit(NULL);
+}
+
+void *input(){
+    newnum[++charnum] = getchar();
+    pthread_exit(NULL);
 }
 
 int main() {
@@ -80,8 +91,20 @@ int main() {
     const char* data = "Hello, serial port!";
     writeSerialPort(serial_port, data);
 
-    // 接收数据
-    readSerialPort(serial_port);
+    while(true){
+        int rc = pthread_create(&thread[0], NULL, readSerialPort, &serial_port);
+        if(rc != 0) cerr << "Serial Input Error\n";
+        rc = pthread_create(&thread[1], NULL, input);
+        if(rc != 0) cerr << "Keyboard Input Error\n";
+        if(newnum[charnum] == '\n'){
+            cnt = 0;
+            for(int i = charnum - 1; i >= 0; i--){
+                cnt += (newnum - '0') * pow(10, charnum - i);
+            }
+            memset(newnum, 0, sizeof(newnum));
+        }
+        if(cnt == 0)    break;
+    }
 
     // 关闭串口
     close(serial_port);
