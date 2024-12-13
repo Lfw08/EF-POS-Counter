@@ -7,7 +7,7 @@
 #include <pthread.h>
 
 int cnt = -1, charnum;
-char newnum[5];
+char newnum[5], read_buf[256];
 pthread_t thread[5];
 
 int setupSerialPort(const char* serialPortPath) {
@@ -64,7 +64,7 @@ void writeSerialPort(int serial_port, const char* data) {
 }
 
 void *readSerialPort(void *serial_port) {
-    char read_buf [256];
+    memset(read_buf, 0, sizeof(read_buf));
     ssize_t bytes_read = read(serial_port, &read_buf, sizeof(read_buf));
     if (bytes_read > 0) {
         std::cout << "Read " << bytes_read << " bytes. Received message: " << std::string(read_buf, bytes_read) << std::endl;
@@ -80,6 +80,7 @@ void *input(){
 }
 
 int main() {
+    freeopen("POS-Data.data", "w", stdout);
     const char* serialPortPath = "/dev/ttyUSB0"; // 串口设备路径
 
     int serial_port = setupSerialPort(serialPortPath);
@@ -96,6 +97,7 @@ int main() {
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input);
         if(rc != 0) cerr << "Keyboard Input Error\n";
+//        if(read_buf == )    cnt--;
         if(newnum[charnum] == '\n'){
             cnt = 0;
             for(int i = charnum - 1; i >= 0; i--){
@@ -103,6 +105,7 @@ int main() {
             }
             memset(newnum, 0, sizeof(newnum));
         }
+        cout << cnt;
         if(cnt == 0)    break;
     }
 
