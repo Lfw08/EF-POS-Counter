@@ -97,15 +97,18 @@ int main() {
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input);
         if(rc != 0) cerr << "Keyboard Input Error\n";
-//        if(read_buf == )    cnt--;
+        if(read_buf == ){
+            cnt--;
+            cout << cnt << "\n";
+        }
         if(newnum[charnum] == '\n'){
             cnt = 0;
             for(int i = charnum - 1; i >= 0; i--){
-                cnt += (newnum - '0') * pow(10, charnum - i);
+                cnt += (newnum - '0') * pow(10, charnum - i - 1);
             }
             memset(newnum, 0, sizeof(newnum));
+            cout << cnt << "\n";
         }
-        cout << cnt;
         if(cnt == 0)    break;
     }
 
