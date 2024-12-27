@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 
-a="1145"
 
 #read number from file
 a = ''
