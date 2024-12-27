@@ -3,10 +3,25 @@ from tkinter import ttk
 
 a="1145"
 
+#read number from file
+a = ''
+with open('number.txt', 'r') as file:
+    for line in file:
+        a = line
+        a = a.strip("\n")
+        a = "数量：" + a 
+
 
 root = Tk()
-frm = ttk.Frame(root, padding=10)
-frm.grid()
-ttk.Label(frm, text=a, font=("Arial", 400)).grid(column=0, row=1)
-ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)
+root.attributes('-fullscreen', True)
+
+
+label01=Label(root, text=a, font=("Arial", 200),)
+label01.pack(expand=True)
+
+
+button1=Button(root, text="Quit", command=root.destroy)
+button1.pack(side=BOTTOM,fill=X)
+
 root.mainloop()
+
