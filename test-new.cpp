@@ -6,7 +6,7 @@
 #include <termios.h>
 #include <pthread.h>
 
-int cnt = -1, charnum;
+int cnt = -1, tmp, charnum, data[4];
 char newnum[5], read_buf[256];
 pthread_t thread[5];
 
@@ -64,13 +64,16 @@ void writeSerialPort(int serial_port, const char* data) {
 }
 
 void *readSerialPort(void *serial_port) {
-    memset(read_buf, 0, sizeof(read_buf));
-    ssize_t bytes_read = read(serial_port, &read_buf, sizeof(read_buf));
-    if (bytes_read > 0) {
-        std::cout << "Read " << bytes_read << " bytes. Received message: " << std::string(read_buf, bytes_read) << std::endl;
-    } else if (bytes_read < 0) {
-        std::cerr << "Error reading from serial port: " << strerror(errno) << std::endl;
+    memset(data, 0, sizeof(data));
+    for(int i = 0; i < 4; i++){
+        ssize_t bytes_read = read(serial_port, &data[i], sizeof(1));
+        if (bytes_read > 0) {
+            std::cout << "Read " << bytes_read << " bytes.\n";
+        } else if (bytes_read < 0) {
+            std::cerr << "Error reading from serial port: " << strerror(errno) << "\n";
+        }
     }
+    
     pthread_exit(NULL);
 }
 
@@ -81,7 +84,7 @@ void *input(){
 
 int main() {
     freeopen("POS-Data.data", "w", stdout);
-    const char* serialPortPath = "/dev/ttyUSB0"; // 串口设备路径
+    const char* serialPortPath = "/dev/ttyAMA0"; // 串口设备路径
 
     int serial_port = setupSerialPort(serialPortPath);
     if(serial_port < 0) {
@@ -93,11 +96,13 @@ int main() {
     writeSerialPort(serial_port, data);
 
     while(true){
+        freeopen("POS-Data.txt", "w", stdout);
         int rc = pthread_create(&thread[0], NULL, readSerialPort, &serial_port);
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input);
         if(rc != 0) cerr << "Keyboard Input Error\n";
-        if(read_buf == ){
+        if(data[0] == 0x5A && data[1] * 10 + data[2] > tmp){
+            tmp = data[1] * 10
             cnt--;
             cout << cnt << "\n";
         }
