@@ -4,6 +4,8 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
+#include <cstring>
+#include <cmath>
 #include <pthread.h>
 
 using namespace std;
