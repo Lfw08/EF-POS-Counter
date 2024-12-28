@@ -6,7 +6,7 @@
 #include <termios.h>
 #include <pthread.h>
 
-int cnt = -1, tmp, charnum, data[4];
+int cnt = -1, tmp, charnum, data[4], siz[3] = {1, 2, 1};
 char newnum[5], read_buf[256];
 pthread_t thread[5];
 
@@ -65,8 +65,8 @@ void writeSerialPort(int serial_port, const char* data) {
 
 void *readSerialPort(void *serial_port) {
     memset(data, 0, sizeof(data));
-    for(int i = 0; i < 4; i++){
-        ssize_t bytes_read = read(serial_port, &data[i], sizeof(1));
+    for(int i = 0; i < 3; i++){
+        ssize_t bytes_read = read(serial_port, &data[i], siz[i]);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
@@ -101,7 +101,7 @@ int main() {
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input);
         if(rc != 0) cerr << "Keyboard Input Error\n";
-        if(data[0] == 0x5A && data[1] * 10 + data[2] > tmp){
+        if(data[0] == 0x5A && data[1] > tmp){
             tmp = data[1] * 10
             cnt--;
             cout << cnt << "\n";
