@@ -78,7 +78,7 @@ void *readSerialPort(void *serial_port) {
     pthread_exit(NULL);
 }
 
-void *input(){
+void *input(void *a){
     newnum[++charnum] = getchar();
     pthread_exit(NULL);
 }
@@ -100,7 +100,7 @@ int main() {
         freopen("POS-Data.txt", "w", stdout);
         int rc = pthread_create(&thread[0], NULL, readSerialPort, &serial_port);
         if(rc != 0) cerr << "Serial Input Error\n";
-        rc = pthread_create(&thread[1], NULL, input);
+        rc = pthread_create(&thread[1], NULL, input, &tmp);
         if(rc != 0) cerr << "Keyboard Input Error\n";
         if(dt[0] == 0x5A && dt[1] > tmp){
             tmp = dt[1];
