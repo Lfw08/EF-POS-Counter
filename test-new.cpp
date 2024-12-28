@@ -67,10 +67,10 @@ void writeSerialPort(int serial_port, const char* w_data) {
     }
 }
 
-void *readSerialPort(int &serial_port) {
+void *readSerialPort(void *serial_port) {
     memset(dt, 0, sizeof(dt));
     for(int i = 0; i < 3; i++) {
-        ssize_t bytes_read = read(serial_port, &dt[i], siz[i]);
+        ssize_t bytes_read = read((int)serial_port, &dt[i], siz[i]);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
@@ -113,7 +113,7 @@ int main() {
         if(newnum[charnum] == '\n'){
             cnt = 0;
             for(int i = charnum - 1; i >= 0; i--){
-                cnt +=(int)(newnum - '0') * pow(10, charnum - i - 1);
+                cnt +=(int)(newnum[i] - '0') * pow(10, charnum - i - 1);
             }
             memset(newnum, 0, sizeof(newnum));
             cout << cnt << "\n";
