@@ -103,6 +103,8 @@ int main() {
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input, &tmp);
         if(rc != 0) cerr << "Keyboard Input Error\n";
+        cout << dt[0] << "\n";
+        system("pause");
         if(dt[0] == 0x5A && dt[1] > tmp){
             tmp = dt[1];
             cnt--;
