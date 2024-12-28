@@ -67,7 +67,7 @@ void writeSerialPort(int serial_port, const char* w_data) {
     }
 }
 
-void *readSerialPort(void *serial_port) {
+void *readSerialPort(int &serial_port) {
     memset(dt, 0, sizeof(dt));
     for(int i = 0; i < 3; i++) {
         ssize_t bytes_read = read(serial_port, &dt[i], siz[i]);
@@ -86,7 +86,6 @@ void *input(void *a){
 }
 
 int main() {
-    freeopen("POS-Data.data", "w", stdout);
     const char* serialPortPath = "/dev/ttyAMA0"; // 串口设备路径
 
     int serial_port = setupSerialPort(serialPortPath);
@@ -112,7 +111,7 @@ int main() {
         if(newnum[charnum] == '\n'){
             cnt = 0;
             for(int i = charnum - 1; i >= 0; i--){
-                cnt += (newnum - '0') * pow(10, charnum - i - 1);
+                cnt +=(int)(newnum - '0') * pow(10, charnum - i - 1);
             }
             memset(newnum, 0, sizeof(newnum));
             cout << cnt << "\n";
