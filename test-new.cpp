@@ -6,7 +6,9 @@
 #include <termios.h>
 #include <pthread.h>
 
-int cnt = -1, tmp, charnum, data[4], siz[3] = {1, 2, 1};
+using namespace std;
+
+int cnt = -1, tmp, charnum, dt[4], siz[3] = {1, 2, 1};
 char newnum[5], read_buf[256];
 pthread_t thread[5];
 
@@ -56,24 +58,23 @@ int setupSerialPort(const char* serialPortPath) {
     return serial_port;
 }
 
-void writeSerialPort(int serial_port, const char* data) {
-    ssize_t bytes_written = write(serial_port, data, strlen(data));
+void writeSerialPort(int serial_port, const char* w_data) {
+    ssize_t bytes_written = write(serial_port, w_data, strlen(w_data));
     if (bytes_written < 0) {
         std::cerr << "Error writing to serial port: " << strerror(errno) << std::endl;
     }
 }
 
 void *readSerialPort(void *serial_port) {
-    memset(data, 0, sizeof(data));
-    for(int i = 0; i < 3; i++){
-        ssize_t bytes_read = read(serial_port, &data[i], siz[i]);
+    memset(dt, 0, sizeof(dt));
+    for(int i = 0; i < 3; i++) {
+        ssize_t bytes_read = read(serial_port, &dt[i], siz[i]);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
             std::cerr << "Error reading from serial port: " << strerror(errno) << "\n";
         }
     }
-    
     pthread_exit(NULL);
 }
 
@@ -92,17 +93,17 @@ int main() {
     }
 
     // 发送数据
-    const char* data = "Hello, serial port!";
-    writeSerialPort(serial_port, data);
+    const char* w_data = "1";
+    writeSerialPort(serial_port, w_data);
 
     while(true){
-        freeopen("POS-Data.txt", "w", stdout);
+        freopen("POS-Data.txt", "w", stdout);
         int rc = pthread_create(&thread[0], NULL, readSerialPort, &serial_port);
         if(rc != 0) cerr << "Serial Input Error\n";
         rc = pthread_create(&thread[1], NULL, input);
         if(rc != 0) cerr << "Keyboard Input Error\n";
-        if(data[0] == 0x5A && data[1] > tmp){
-            tmp = data[1] * 10
+        if(dt[0] == 0x5A && dt[1] > tmp){
+            tmp = dt[1];
             cnt--;
             cout << cnt << "\n";
         }
