@@ -10,9 +10,10 @@
 
 using namespace std;
 
-int cnt = -1, tmp, charnum, dt[4], siz[3] = {1, 2, 1};
+int cnt = -1, tmp, charnum, dt[4], siz[3] = {1, 2, 1}, serial_port;
 char newnum[5], read_buf[256];
 pthread_t thread[5];
+int _Index[3];
 
 int setupSerialPort(const char* serialPortPath) {
     // 打开串口
@@ -67,10 +68,10 @@ void writeSerialPort(int serial_port, const char* w_data) {
     }
 }
 
-void *readSerialPort(void *serial_port) {
+void *readSerialPort(void *ccf) {
     memset(dt, 0, sizeof(dt));
     for(int i = 0; i < 3; i++) {
-        ssize_t bytes_read = read((int)serial_port, &dt[i], siz[i]);
+        ssize_t bytes_read = read(serial_port, &dt[i], siz[i]);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
@@ -80,7 +81,7 @@ void *readSerialPort(void *serial_port) {
     pthread_exit(NULL);
 }
 
-void *input(void *a){
+void *input(void *ccf){
     newnum[++charnum] = getchar();
     pthread_exit(NULL);
 }
@@ -88,20 +89,20 @@ void *input(void *a){
 int main() {
     const char* serialPortPath = "/dev/ttyAMA0"; // 串口设备路径
 
-    int serial_port = setupSerialPort(serialPortPath);
+    serial_port = setupSerialPort(serialPortPath);
     if(serial_port < 0) {
         return 1;
     }
 
     // 发送数据
-    const char* w_data = "1";
+    const char* w_data = "2";
     writeSerialPort(serial_port, w_data);
-
+    return 0;
     while(true){
         freopen("POS-Data.txt", "w", stdout);
-        int rc = pthread_create(&thread[0], NULL, readSerialPort, &serial_port);
+        int rc = pthread_create(&thread[0], NULL, readSerialPort, &_Index[0]);
         if(rc != 0) cerr << "Serial Input Error\n";
-        rc = pthread_create(&thread[1], NULL, input, &tmp);
+        rc = pthread_create(&thread[1], NULL, input, &_Index[1]);
         if(rc != 0) cerr << "Keyboard Input Error\n";
         cout << dt[0] << "\n";
         system("pause");
