@@ -40,7 +40,7 @@ int setupSerialPort(const char* serialPortPath) {
     tty.c_cflag &= ~PARENB; // 清除奇偶校验位
 
     // 设置其他串口参数
-    tty.c_cflag &= ~CSTOPB; // 清除停止位
+    tty.c_cflag &= -CSTOPB; // 1位停止位
     tty.c_cflag &= ~CSIZE; // 清除所有位大小掩码
     tty.c_cflag |= CS8; // 设置8个数据位
     tty.c_cflag &= ~CRTSCTS; // 关闭RTS/CTS流控制
