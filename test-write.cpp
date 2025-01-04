@@ -78,7 +78,7 @@ int main() {
     }
 
     // 发送数据
-    int Data = 1;
-    for(int i = 0; i < 4; i++)    writeSerialPort(&Data);
+    int Data[4] = {1, 1, 1, 1};
+    writeSerialPort(Data);
     return 0;
 }
