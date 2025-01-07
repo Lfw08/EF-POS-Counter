@@ -65,17 +65,17 @@ int setupSerialPort(const char* serialPortPath) {
 }
 
 
-void *readSerialPort(void *ccf) {
+void readSerialPort(void *ccf) {
     memset(dt, 0, sizeof(dt));
     for(int i = 0; i < 4; i++) {
-        ssize_t bytes_read = read(serial_port, &dt[i], 1);
+        ssize_t bytes_read = read(serial_port, &dt[i], 8);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
             std::cerr << "Error reading from serial port: " << strerror(errno) << "\n";
         }
     }
-    pthread_exit(NULL);
+    return ;
 }
 
 int main() {
@@ -85,9 +85,9 @@ int main() {
     if(serial_port < 0) {
         return 1;
     }
-
+    cout << "1\n";
     readSerialPort(_Index);
-
+    cout << "2\n";
     for(int i = 0; i < 4; i++){
         cout << dt[i] << "\n";
     }
