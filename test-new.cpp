@@ -69,20 +69,29 @@ void writeSerialPort(const char* w_data) {
 }
 
 void *readSerialPort(void *ccf) {
-    memset(dt, 0, sizeof(dt));
-    for(int i = 0; i < 4; i++) {
-        ssize_t bytes_read = read(serial_port, &dt[i], 1);
-        if (bytes_read > 0) {
-            std::cout << "Read " << bytes_read << " bytes.\n";
-        } else if (bytes_read < 0) {
-            std::cerr << "Error reading from serial port: " << strerror(errno) << "\n";
+    while(true){
+        memset(dt, 0, sizeof(dt));
+        for(int i = 0; i < 4; i++) {
+            ssize_t bytes_read = read(serial_port, &dt[i], 1);
+            if (bytes_read > 0) {
+                std::cout << "Read " << bytes_read << " bytes.\n";
+            } else if (bytes_read < 0) {
+                std::cerr << "Error reading from serial port: " << strerror(errno) << "\n";
+                break;
+            }
+        }
+        int num = dt[1] * 16 + dt[2];
+        if(dt[0] == 0x5A && num > tmp && dt[0] || dt[1] || dt[2] == dt[3]){
+            tmp = num;
+            cnt--;
+            cout << cnt << "\n";
         }
     }
     pthread_exit(NULL);
 }
 
 void *input(void *ccf){
-    newnum[++charnum] = getchar();
+    while(true) cin >> cnt;
     pthread_exit(NULL);
 }
 
@@ -97,32 +106,12 @@ int main() {
     // 发送数据
     const char* w_data = "2";
     writeSerialPort(w_data);
-    return 0;
-
-    while(true){
-        freopen("POS-Data.txt", "w", stdout);
-        int rc = pthread_create(&thread[0], NULL, readSerialPort, &_Index[0]);
-        if(rc != 0) cerr << "Serial Input Error\n";
-        rc = pthread_create(&thread[1], NULL, input, &_Index[1]);
-        if(rc != 0) cerr << "Keyboard Input Error\n";
-        cout << dt[0] << "\n";
-        system("pause");
-        int num = dt[1] * 16 + dt[2];
-        if(dt[0] == 0x5A && num > tmp && dt[0] || dt[1] || dt[2] == dt[3]){
-            tmp = num;
-            cnt--;
-            cout << cnt << "\n";
-        }
-        if(newnum[charnum] == '\n'){
-            cnt = 0;
-            for(int i = charnum - 1; i >= 0; i--){
-                cnt +=(int)(newnum[i] - '0') * pow(10, charnum - i - 1);
-            }
-            memset(newnum, 0, sizeof(newnum));
-            cout << cnt << "\n";
-        }
-        if(cnt == 0)    break;
-    }
+    
+    freopen("POS-Data.txt", "w", stdout);
+    int rc = pthread_create(&thread[0], NULL, readSerialPort, &_Index[0]);
+    if(rc != 0) cerr << "Serial Input Error\n";
+    rc = pthread_create(&thread[1], NULL, input, &_Index[1]);
+    if(rc != 0) cerr << "Keyboard Input Error\n";
 
     // 关闭串口
     close(serial_port);

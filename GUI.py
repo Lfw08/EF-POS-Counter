@@ -8,7 +8,7 @@ with open('number.txt', 'r') as file:
     for line in file:
         a = line
         a = a.strip("\n")
-        a = "数量：" + a 
+        a = "数量：" + "\n"+a 
 
 
 root = Tk()
