@@ -62,7 +62,7 @@ int setupSerialPort(const char* serialPortPath) {
 }
 
 void writeSerialPort(const void *w_data) {
-    ssize_t bytes_written = write(serial_port, w_data, 8);
+    ssize_t bytes_written = write(serial_port, w_data, 1);
     if (bytes_written < 0) {
         std::cerr << "Error writing to serial port: " << strerror(errno) << std::endl;
     }
@@ -78,7 +78,8 @@ int main() {
     }
 
     // 发送数据
-    int Data[4] = {1, 1, 1, 1};
+    int Data[4] = {1, 2, 114514, 0x5A};
+//    writeSerialPort(Data);
     for(int i = 0; i < 4; i++)	writeSerialPort(&Data[i]);
     return 0;
 }

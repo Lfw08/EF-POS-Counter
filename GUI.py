@@ -15,7 +15,7 @@ root = Tk()
 root.attributes('-fullscreen', True)
 
 
-label01=Label(root, text=a, font=("Arial", 200),)
+label01=Label(root, text=a, font=("Arial", 100),)
 label01.pack(expand=True)
 
 

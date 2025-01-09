@@ -68,7 +68,7 @@ int setupSerialPort(const char* serialPortPath) {
 void readSerialPort(void *ccf) {
     memset(dt, 0, sizeof(dt));
     for(int i = 0; i < 4; i++) {
-        ssize_t bytes_read = read(serial_port, &dt[i], 8);
+        ssize_t bytes_read = read(serial_port, &dt[i], 1);
         if (bytes_read > 0) {
             std::cout << "Read " << bytes_read << " bytes.\n";
         } else if (bytes_read < 0) {
