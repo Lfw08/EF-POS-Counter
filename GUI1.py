@@ -29,15 +29,20 @@ class FullScreenApp:
         # 绑定退出快捷键（ESC键）
         master.bind('<Escape>', self.exit_app)
 
+        self.timing()
+    
+    def timing(self):
+        print(1)
         self.auto_update()
-        
+        self.master.after(500,self.timing)
+
     def auto_update(self):
-        while(1):
-            f=open('number.txt','r')
-            tmp=f.read()
-            self.counter=int(tmp)
-            self.label.config(text=str(self.counter))
-            f.close()
+        f=open('number.txt','r')
+        tmp=f.read()
+        self.counter=int(tmp)
+        self.label.config(text=str(self.counter))
+        print(self.counter)
+        f.close()
     
     def exit_app(self, event):
         self.master.destroy()
