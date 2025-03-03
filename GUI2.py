@@ -7,7 +7,7 @@ class FullScreenApp:
         # 设置全屏显示
         master.attributes('-fullscreen', True)
         # 设置黑色背景
-        master.configure(background='#000000')
+        master.configure(background='#0000FF')
         # 隐藏鼠标光标
         master.config(cursor='none')
         
@@ -21,10 +21,10 @@ class FullScreenApp:
         self.label = tk.Label(master, text=str(self.counter), 
                             font=self.customFont, 
                             fg='#FFFFFF',
-                            bg='#000000')
+                            bg='#0000FF')
         # 居中显示
         self.label.place(relx=0.5, rely=0.5, anchor='center')
-
+        
         # 绑定退出快捷键（ESC键）
         master.bind('<Escape>', self.exit_app)
 
